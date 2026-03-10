@@ -1,12 +1,5 @@
 # Speech Command Recognition for Hands-Free Music Control
-
-Using Spectrogram-Based CNN with RL Threshold Optimization
-
-A great README.md acts as the face of your project. Since you are focusing on Spectrogram-Based CNNs and Reinforcement Learning, the overview should highlight how these two sophisticated technologies solve the problem of accidental voice triggers.
-
-Here is a professional, well-structured Project Overview you can paste directly into your README.md.
-
-This project focuses on building a robust, hands-free voice control system for music playback. By converting audio into visual spectrograms and applying Convolutional Neural Networks (CNN), the system identifies specific commands. To solve the common issue of "false triggers" (accidental activations), we utilize a Reinforcement Learning (RL) agent to dynamically optimize decision thresholds.
+This project focuses on building a hands-free voice control system for music playback. By converting audio into visual spectrograms and applying Convolutional Neural Networks (CNN), the system identifies specific commands. To solve the common issue of "false triggers" (accidental activations), we utilize a Reinforcement Learning (RL) agent to dynamically optimize decision thresholds.
 
 ## Project Overview
 
