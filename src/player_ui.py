@@ -270,7 +270,7 @@ class PlayerUI:
     def __init__(self, root: tk.Tk, music_dir: Path | None = None) -> None:
         # Root window sizing favors demo readability on common laptop screens.
         self.root = root
-        self.root.title("Markiplayer")
+        self.root.title("VC Music Player")
         self.root.geometry("850x700")
 
         self.project_root = Path(__file__).resolve().parent.parent
@@ -304,7 +304,7 @@ class PlayerUI:
         self.wrapper = ttk.Frame(self.root, padding=12)
         self.wrapper.pack(fill="both", expand=True)
 
-        header = ttk.Label(self.wrapper, text="Markiplayer", font=("Segoe UI", 16, "bold"))
+        header = ttk.Label(self.wrapper, text="VC Music Player", font=("Segoe UI", 16, "bold"))
         header.pack(anchor="center", pady=(0, 12))
 
         self.song_title_var = tk.StringVar(value="-")
