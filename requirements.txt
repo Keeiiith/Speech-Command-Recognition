@@ -1,0 +1,12 @@
+﻿numpy==1.26.4
+pandas
+matplotlib
+torch==2.2.2
+torchaudio==2.2.2
+SpeechRecognition
+pygame
+mutagen
+soundfile
+pyaudio
+tqdm
+seaborn
