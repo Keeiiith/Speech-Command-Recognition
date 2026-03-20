@@ -314,13 +314,50 @@ def evaluate(config: EvalConfig) -> dict[str, Any]:
     results["output_files"]["predictions_csv"] = str(predictions_path)
     return results
 
+def display_results(results: dict[str, Any]) -> None:
+    print("\n" + "=" * 60)
+    print(" SPEECH COMMAND RECOGNITION - EVALUATION RESULTS ")
+    print("=" * 60)
+
+    # 🔹 Overall Metrics
+    print("\n[OVERALL PERFORMANCE]")
+    print(f"Accuracy       : {results['accuracy']:.4f}")
+    print(f"Macro F1-Score: {results['macro_f1']:.4f}")
+    print(f"Expected Cost : {results['expected_cost']:.4f}")
+    print(f"Threshold     : {results['threshold']}")
+
+    # 🔹 Per-Class Table
+    print("\n[PER-CLASS PERFORMANCE]")
+    print("-" * 60)
+    print(f"{'Class':<12}{'Precision':<12}{'Recall':<12}{'F1-Score':<12}")
+    print("-" * 60)
+
+    for item in results["per_class_metrics"]:
+        print(f"{item['label']:<12}{item['precision']:<12.4f}{item['recall']:<12.4f}{item['f1']:<12.4f}")
+
+    print("-" * 60)
+
+    # 🔹 Highlight best & worst
+    best = max(results["per_class_metrics"], key=lambda x: x["f1"])
+    worst = min(results["per_class_metrics"], key=lambda x: x["f1"])
+
+    print("\n[INSIGHTS]")
+    print(f"Best Performing Class : {best['label']} (F1={best['f1']:.4f})")
+    print(f"Weakest Class         : {worst['label']} (F1={worst['f1']:.4f})")
+
+    print("\n[FILES]")
+    for key, value in results["output_files"].items():
+        print(f"{key}: {value}")
+
+    print("=" * 60 + "\n")
+
 
 def main() -> None:
     """CLI entry point for running evaluation."""
 
     config = parse_args()
     metrics = evaluate(config)
-    print(json.dumps(metrics, indent=2))
+    display_results(metrics)
 
 
 if __name__ == "__main__":
