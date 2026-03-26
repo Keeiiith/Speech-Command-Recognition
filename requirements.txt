@@ -10,3 +10,4 @@ soundfile
 pyaudio
 tqdm
 seaborn
+Pillow
