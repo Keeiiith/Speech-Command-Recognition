@@ -1,0 +1,7 @@
+true\pred,next,pause,play,previous,stop,unknown
+next,367,0,0,3,0,26
+pause,0,345,5,4,1,47
+play,2,1,348,1,5,45
+previous,2,1,0,363,0,46
+stop,0,0,2,1,386,22
+unknown,58,10,95,17,23,808

@@ -1,0 +1,61 @@
+{
+  "split": "test",
+  "num_examples": 3034,
+  "accuracy": 0.862558,
+  "macro_f1": 0.877111,
+  "expected_cost": 0.466381,
+  "threshold": 0.5,
+  "latency": {
+    "avg_latency_per_sample_sec": 0.000745,
+    "throughput_samples_per_sec": 1341.57
+  },
+  "label_to_index": {
+    "next": 0,
+    "pause": 1,
+    "play": 2,
+    "previous": 3,
+    "stop": 4,
+    "unknown": 5
+  },
+  "per_class_metrics": [
+    {
+      "label": "next",
+      "precision": 0.855478,
+      "recall": 0.926768,
+      "f1": 0.889697
+    },
+    {
+      "label": "pause",
+      "precision": 0.966387,
+      "recall": 0.858209,
+      "f1": 0.909091
+    },
+    {
+      "label": "play",
+      "precision": 0.773333,
+      "recall": 0.865672,
+      "f1": 0.816901
+    },
+    {
+      "label": "previous",
+      "precision": 0.933162,
+      "recall": 0.881068,
+      "f1": 0.906367
+    },
+    {
+      "label": "stop",
+      "precision": 0.93012,
+      "recall": 0.939173,
+      "f1": 0.934625
+    },
+    {
+      "label": "unknown",
+      "precision": 0.812877,
+      "recall": 0.799209,
+      "f1": 0.805985
+    }
+  ],
+  "output_files": {
+    "confusion_matrix_csv": "D:\\RNYUMUL\\Documents\\Speech-Command-Recognition\\experiments\\results\\test_confusion_matrix.csv"
+  }
+}

@@ -1,0 +1,396 @@
+{
+  "config": {
+    "checkpoint_path": "D:\\RNYUMUL\\Documents\\Speech-Command-Recognition\\experiments\\checkpoints\\best_model.pt",
+    "manifest_dir": "D:\\RNYUMUL\\Documents\\Speech-Command-Recognition\\data\\processed",
+    "audio_root": "D:\\RNYUMUL\\Documents\\Speech-Command-Recognition\\data\\raw",
+    "output_dir": "D:\\RNYUMUL\\Documents\\Speech-Command-Recognition\\experiments\\results",
+    "train_split": "val",
+    "eval_split": "test",
+    "batch_size": 32,
+    "num_workers": 0,
+    "seed": 42,
+    "episodes": 25,
+    "learning_rate": 0.15,
+    "discount_factor": 0.9,
+    "epsilon_start": 0.3,
+    "epsilon_end": 0.05,
+    "confidence_bins": 10,
+    "entropy_bins": 6,
+    "false_positive_cost": 5.0,
+    "false_negative_cost": 2.0,
+    "mismatch_cost": 1.0
+  },
+  "label_to_index": {
+    "next": 0,
+    "pause": 1,
+    "play": 2,
+    "previous": 3,
+    "stop": 4,
+    "unknown": 5
+  },
+  "policy": {
+    "actions": [
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9
+    ],
+    "states": [
+      {
+        "state": {
+          "confidence_bin": 2,
+          "entropy_bin": 4
+        },
+        "q_values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "best_threshold": 0.3
+      },
+      {
+        "state": {
+          "confidence_bin": 2,
+          "entropy_bin": 5
+        },
+        "q_values": [
+          -6.769025,
+          -6.897839,
+          -6.570904,
+          -6.770222,
+          -6.757861,
+          -6.646333,
+          -6.571994
+        ],
+        "best_threshold": 0.5
+      },
+      {
+        "state": {
+          "confidence_bin": 3,
+          "entropy_bin": 3
+        },
+        "q_values": [
+          -1.465315,
+          -1.294611,
+          -1.096182,
+          -1.114806,
+          -1.139115,
+          -1.062932,
+          -1.022197
+        ],
+        "best_threshold": 0.9
+      },
+      {
+        "state": {
+          "confidence_bin": 3,
+          "entropy_bin": 4
+        },
+        "q_values": [
+          -8.800752,
+          -8.061367,
+          -8.232481,
+          -8.104842,
+          -8.122771,
+          -7.730474,
+          -8.061472
+        ],
+        "best_threshold": 0.8
+      },
+      {
+        "state": {
+          "confidence_bin": 3,
+          "entropy_bin": 5
+        },
+        "q_values": [
+          -10.530282,
+          -10.11461,
+          -9.710111,
+          -10.052051,
+          -10.052863,
+          -10.094446,
+          -10.14181
+        ],
+        "best_threshold": 0.5
+      },
+      {
+        "state": {
+          "confidence_bin": 4,
+          "entropy_bin": 2
+        },
+        "q_values": [
+          -2.393234,
+          -1.307981,
+          -1.236699,
+          -1.018257,
+          -1.030536,
+          -1.396851,
+          -0.897217
+        ],
+        "best_threshold": 0.9
+      },
+      {
+        "state": {
+          "confidence_bin": 4,
+          "entropy_bin": 3
+        },
+        "q_values": [
+          -8.455461,
+          -7.970037,
+          -5.589907,
+          -5.505449,
+          -5.627182,
+          -5.169211,
+          -5.538605
+        ],
+        "best_threshold": 0.8
+      },
+      {
+        "state": {
+          "confidence_bin": 4,
+          "entropy_bin": 4
+        },
+        "q_values": [
+          -9.93114,
+          -10.06795,
+          -9.819031,
+          -9.781919,
+          -9.915276,
+          -9.805042,
+          -8.342785
+        ],
+        "best_threshold": 0.9
+      },
+      {
+        "state": {
+          "confidence_bin": 4,
+          "entropy_bin": 5
+        },
+        "q_values": [
+          -6.819686,
+          -6.987887,
+          -6.7242,
+          -6.627399,
+          -6.746752,
+          -6.558289,
+          -6.60551
+        ],
+        "best_threshold": 0.8
+      },
+      {
+        "state": {
+          "confidence_bin": 5,
+          "entropy_bin": 2
+        },
+        "q_values": [
+          -8.605351,
+          -6.36885,
+          -6.920753,
+          -4.399606,
+          -5.209494,
+          -5.137568,
+          -5.026941
+        ],
+        "best_threshold": 0.6
+      },
+      {
+        "state": {
+          "confidence_bin": 5,
+          "entropy_bin": 3
+        },
+        "q_values": [
+          -10.147736,
+          -9.829179,
+          -11.002796,
+          -9.403532,
+          -7.707539,
+          -9.443007,
+          -9.546585
+        ],
+        "best_threshold": 0.7
+      },
+      {
+        "state": {
+          "confidence_bin": 5,
+          "entropy_bin": 4
+        },
+        "q_values": [
+          -11.255829,
+          -11.248765,
+          -11.393647,
+          -11.089923,
+          -11.085376,
+          -11.198034,
+          -10.634518
+        ],
+        "best_threshold": 0.9
+      },
+      {
+        "state": {
+          "confidence_bin": 6,
+          "entropy_bin": 2
+        },
+        "q_values": [
+          -9.523518,
+          -10.221807,
+          -8.590098,
+          -9.423943,
+          -7.271498,
+          -6.593853,
+          -7.083583
+        ],
+        "best_threshold": 0.8
+      },
+      {
+        "state": {
+          "confidence_bin": 6,
+          "entropy_bin": 3
+        },
+        "q_values": [
+          -11.796208,
+          -11.336486,
+          -11.300846,
+          -10.950028,
+          -10.986049,
+          -10.817939,
+          -9.597543
+        ],
+        "best_threshold": 0.9
+      },
+      {
+        "state": {
+          "confidence_bin": 6,
+          "entropy_bin": 4
+        },
+        "q_values": [
+          -4.311379,
+          -3.81283,
+          -4.510026,
+          -3.777073,
+          -3.939988,
+          -3.938159,
+          -3.751879
+        ],
+        "best_threshold": 0.9
+      },
+      {
+        "state": {
+          "confidence_bin": 7,
+          "entropy_bin": 1
+        },
+        "q_values": [
+          -10.569172,
+          -10.419469,
+          -10.379126,
+          -10.479897,
+          -10.93057,
+          -10.496758,
+          -9.651903
+        ],
+        "best_threshold": 0.9
+      },
+      {
+        "state": {
+          "confidence_bin": 7,
+          "entropy_bin": 2
+        },
+        "q_values": [
+          -11.640977,
+          -11.78582,
+          -11.809767,
+          -11.304797,
+          -10.507639,
+          -9.379362,
+          -9.062758
+        ],
+        "best_threshold": 0.9
+      },
+      {
+        "state": {
+          "confidence_bin": 7,
+          "entropy_bin": 3
+        },
+        "q_values": [
+          -4.802924,
+          -5.259232,
+          -6.183148,
+          -4.786696,
+          -4.712836,
+          -2.637464,
+          -3.175808
+        ],
+        "best_threshold": 0.8
+      },
+      {
+        "state": {
+          "confidence_bin": 8,
+          "entropy_bin": 1
+        },
+        "q_values": [
+          -14.517073,
+          -13.274062,
+          -14.147975,
+          -13.719449,
+          -14.242512,
+          -13.256915,
+          -12.218754
+        ],
+        "best_threshold": 0.9
+      },
+      {
+        "state": {
+          "confidence_bin": 8,
+          "entropy_bin": 2
+        },
+        "q_values": [
+          -9.760023,
+          -9.048092,
+          -8.814644,
+          -8.571674,
+          -9.831357,
+          -9.65962,
+          -6.947698
+        ],
+        "best_threshold": 0.9
+      },
+      {
+        "state": {
+          "confidence_bin": 9,
+          "entropy_bin": 0
+        },
+        "q_values": [
+          -7.407356,
+          -7.500531,
+          -7.174948,
+          -7.047572,
+          -5.969297,
+          -7.432847,
+          -6.99468
+        ],
+        "best_threshold": 0.7
+      },
+      {
+        "state": {
+          "confidence_bin": 9,
+          "entropy_bin": 1
+        },
+        "q_values": [
+          -15.852317,
+          -15.927817,
+          -13.663355,
+          -14.892431,
+          -16.242312,
+          -15.080265,
+          -15.298798
+        ],
+        "best_threshold": 0.5
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "train_split": "val",
+  "eval_split": "test",
+  "num_training_samples": 2715,
+  "num_evaluation_samples": 3034,
+  "baseline_threshold": 0.5,
+  "metrics": {
+    "rl_expected_cost": 0.887937,
+    "baseline_expected_cost": 1.554384,
+    "cost_reduction": 0.666447,
+    "rl_accept_rate": 0.512854,
+    "baseline_accept_rate": 0.907383
+  },
+  "output_files": {
+    "policy_json": "D:\\RNYUMUL\\Documents\\Speech-Command-Recognition\\experiments\\results\\rl_threshold_policy.json",
+    "learning_curve_csv": "D:\\RNYUMUL\\Documents\\Speech-Command-Recognition\\experiments\\results\\rl_learning_curve.csv",
+    "summary_json": "D:\\RNYUMUL\\Documents\\Speech-Command-Recognition\\experiments\\results\\rl_metrics.json"
+  }
+}

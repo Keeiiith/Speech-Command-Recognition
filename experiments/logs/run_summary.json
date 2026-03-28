@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-03-28T05:22:20Z",
+  "config": {
+    "manifest_dir": "D:\\RNYUMUL\\Documents\\Speech-Command-Recognition\\data\\processed",
+    "audio_root": "D:\\RNYUMUL\\Documents\\Speech-Command-Recognition\\data\\raw",
+    "output_dir": "D:\\RNYUMUL\\Documents\\Speech-Command-Recognition\\experiments\\checkpoints",
+    "logs_dir": "D:\\RNYUMUL\\Documents\\Speech-Command-Recognition\\experiments\\logs",
+    "epochs": 15,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "batch_size": 32,
+    "num_workers": 0,
+    "seed": 42,
+    "patience": 4
+  },
+  "labels": {
+    "next": 0,
+    "pause": 1,
+    "play": 2,
+    "previous": 3,
+    "stop": 4,
+    "unknown": 5
+  },
+  "best_validation_metrics": {
+    "best_epoch": 15,
+    "best_val_macro_f1": 0.87049
+  }
+}
