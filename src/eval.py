@@ -13,6 +13,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import time  # ✅ ADDED
+
 import torch
 import torch.nn as nn
 
@@ -101,38 +103,56 @@ def run_inference(
     device: torch.device,
     threshold: float,
     silence_index: int,
-) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    """Run inference and apply confidence thresholding to predictions."""
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, float, float]:  # ✅ UPDATED
 
     model.eval()
     all_probabilities: list[torch.Tensor] = []
     all_predictions: list[torch.Tensor] = []
     all_targets: list[torch.Tensor] = []
 
+    total_time = 0.0  # ✅ ADDED
+    total_samples = 0  # ✅ ADDED
+
     for features, labels, _ in data_loader:
         features = features.to(device=device, dtype=torch.float32)
         labels = labels.to(device=device, dtype=torch.long)
 
-        # Model outputs are converted to probabilities for threshold logic.
+        # ✅ CUDA sync for accurate timing
+        if device.type == "cuda":
+            torch.cuda.synchronize()
+
+        start_time = time.perf_counter()  # ✅ ADDED
+
         logits = model(features)
         probabilities = torch.softmax(logits, dim=1)
         max_probabilities, predicted_labels = torch.max(probabilities, dim=1)
 
-        # If confidence is too low, force the output to silence/non-trigger.
-        # Low-confidence predictions are redirected to silence to reduce
-        # accidental command triggers in noisy conditions.
         low_confidence_mask = max_probabilities < threshold
         predicted_labels = predicted_labels.clone()
         predicted_labels[low_confidence_mask] = silence_index
+
+        if device.type == "cuda":
+            torch.cuda.synchronize()
+
+        end_time = time.perf_counter()  # ✅ ADDED
+
+        batch_size = features.size(0)
+        total_samples += batch_size
+        total_time += (end_time - start_time)
 
         all_probabilities.append(probabilities.cpu())
         all_predictions.append(predicted_labels.cpu())
         all_targets.append(labels.cpu())
 
+    avg_latency = total_time / total_samples  # ✅ ADDED
+    throughput = total_samples / total_time   # ✅ ADDED
+
     return (
         torch.cat(all_probabilities),
         torch.cat(all_predictions),
         torch.cat(all_targets),
+        avg_latency,
+        throughput,
     )
 
 
@@ -141,7 +161,6 @@ def compute_confusion_matrix(
     targets: torch.Tensor,
     num_classes: int,
 ) -> torch.Tensor:
-    """Create a dense confusion matrix of shape [num_classes, num_classes]."""
 
     confusion = torch.zeros((num_classes, num_classes), dtype=torch.int64)
     for true_label, predicted_label in zip(targets.tolist(), predictions.tolist()):
@@ -157,7 +176,6 @@ def compute_expected_cost(
     false_negative_cost: float,
     command_mismatch_cost: float,
 ) -> float:
-    """Compute expected cost under asymmetric command-detection penalties."""
 
     trigger_labels = {label for label in index_to_label.values() if label not in {"silence", "unknown"}}
 
@@ -171,7 +189,6 @@ def compute_expected_cost(
         true_is_trigger = true_label in trigger_labels
         pred_is_trigger = predicted_label in trigger_labels
 
-        # False activation of a command is highest penalty by design.
         if pred_is_trigger and not true_is_trigger:
             total_cost += false_positive_cost
         elif true_is_trigger and not pred_is_trigger:
@@ -183,7 +200,6 @@ def compute_expected_cost(
 
 
 def compute_per_class_metrics(confusion: torch.Tensor, index_to_label: dict[int, str]) -> list[dict[str, float | str]]:
-    """Compute precision, recall, and F1 for every class from confusion matrix."""
 
     metrics: list[dict[str, float | str]] = []
     for class_index, label_name in sorted(index_to_label.items()):
@@ -207,7 +223,6 @@ def compute_per_class_metrics(confusion: torch.Tensor, index_to_label: dict[int,
 
 
 def save_confusion_matrix_csv(confusion: torch.Tensor, index_to_label: dict[int, str], output_path: Path) -> None:
-    """Save confusion matrix as CSV for reports and spreadsheet analysis."""
 
     label_order = [index_to_label[index] for index in sorted(index_to_label)]
     with output_path.open("w", newline="", encoding="utf-8") as csv_file:
@@ -219,17 +234,13 @@ def save_confusion_matrix_csv(confusion: torch.Tensor, index_to_label: dict[int,
 
 
 def evaluate(config: EvalConfig) -> dict[str, Any]:
-    """Load checkpoint, run evaluation, and write result artifacts."""
 
-    # 1) Restore label mapping and model weights from training checkpoint.
     checkpoint = torch.load(config.checkpoint_path, map_location="cpu")
     label_to_index = checkpoint["label_to_index"]
     index_to_label = inverse_label_map(label_to_index)
 
-    # If silence does not exist for any reason, fallback to unknown then 0.
     silence_index = label_to_index.get("silence", label_to_index.get("unknown", 0))
 
-    # 2) Rebuild dataloaders for the selected split.
     audio_config = AudioConfig(
         batch_size=config.batch_size,
         num_workers=config.num_workers,
@@ -246,8 +257,8 @@ def evaluate(config: EvalConfig) -> dict[str, Any]:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
-    # 3) Run thresholded inference and gather prediction tensors.
-    probabilities, predictions, targets = run_inference(
+    # ✅ UPDATED: capture latency
+    probabilities, predictions, targets, avg_latency, throughput = run_inference(
         model=model,
         data_loader=data_loaders[config.split],
         device=device,
@@ -255,7 +266,6 @@ def evaluate(config: EvalConfig) -> dict[str, Any]:
         silence_index=silence_index,
     )
 
-    # 4) Compute summary metrics and class-wise diagnostics.
     confusion = compute_confusion_matrix(
         predictions=predictions,
         targets=targets,
@@ -279,7 +289,6 @@ def evaluate(config: EvalConfig) -> dict[str, Any]:
 
     per_class = compute_per_class_metrics(confusion, index_to_label)
 
-    # 5) Persist machine-readable artifacts for reports and error analysis.
     config.output_dir.mkdir(parents=True, exist_ok=True)
     confusion_path = config.output_dir / f"{config.split}_confusion_matrix.csv"
     save_confusion_matrix_csv(confusion, index_to_label, confusion_path)
@@ -291,6 +300,13 @@ def evaluate(config: EvalConfig) -> dict[str, Any]:
         "macro_f1": round(float(macro_f1), 6),
         "expected_cost": round(float(expected_cost), 6),
         "threshold": config.threshold,
+
+        # ✅ ADDED LATENCY
+        "latency": {
+            "avg_latency_per_sample_sec": round(float(avg_latency), 6),
+            "throughput_samples_per_sec": round(float(throughput), 2),
+        },
+
         "label_to_index": label_to_index,
         "per_class_metrics": per_class,
         "output_files": {
@@ -301,7 +317,6 @@ def evaluate(config: EvalConfig) -> dict[str, Any]:
     results_path = config.output_dir / f"{config.split}_metrics.json"
     results_path.write_text(json.dumps(results, indent=2), encoding="utf-8")
 
-    # Save prediction-level details for error analysis and slicing later.
     predictions_path = config.output_dir / f"{config.split}_predictions.csv"
     with predictions_path.open("w", newline="", encoding="utf-8") as csv_file:
         writer = csv.writer(csv_file)
@@ -312,21 +327,26 @@ def evaluate(config: EvalConfig) -> dict[str, Any]:
 
     results["output_files"]["metrics_json"] = str(results_path)
     results["output_files"]["predictions_csv"] = str(predictions_path)
+
     return results
 
+
 def display_results(results: dict[str, Any]) -> None:
+
     print("\n" + "=" * 60)
     print(" SPEECH COMMAND RECOGNITION - EVALUATION RESULTS ")
     print("=" * 60)
 
-    # 🔹 Overall Metrics
     print("\n[OVERALL PERFORMANCE]")
     print(f"Accuracy       : {results['accuracy']:.4f}")
-    print(f"Macro F1-Score: {results['macro_f1']:.4f}")
-    print(f"Expected Cost : {results['expected_cost']:.4f}")
-    print(f"Threshold     : {results['threshold']}")
+    print(f"Macro F1-Score : {results['macro_f1']:.4f}")
+    print(f"Expected Cost  : {results['expected_cost']:.4f}")
+    print(f"Threshold      : {results['threshold']}")
 
-    # 🔹 Per-Class Table
+    # ✅ ADDED LATENCY PRINT
+    print(f"Avg Latency    : {results['latency']['avg_latency_per_sample_sec']:.6f} sec")
+    print(f"Throughput     : {results['latency']['throughput_samples_per_sec']:.2f} samples/sec")
+
     print("\n[PER-CLASS PERFORMANCE]")
     print("-" * 60)
     print(f"{'Class':<12}{'Precision':<12}{'Recall':<12}{'F1-Score':<12}")
@@ -337,13 +357,12 @@ def display_results(results: dict[str, Any]) -> None:
 
     print("-" * 60)
 
-    # 🔹 Highlight best & worst
     best = max(results["per_class_metrics"], key=lambda x: x["f1"])
     worst = min(results["per_class_metrics"], key=lambda x: x["f1"])
 
     print("\n[INSIGHTS]")
     print(f"Best Performing Class : {best['label']} (F1={best['f1']:.4f})")
-    print(f"Weakest Class         : {worst['label']} (F1={worst['f1']:.4f})")
+    print(f"Weakest Class        : {worst['label']} (F1={worst['f1']:.4f})")
 
     print("\n[FILES]")
     for key, value in results["output_files"].items():
@@ -353,8 +372,6 @@ def display_results(results: dict[str, Any]) -> None:
 
 
 def main() -> None:
-    """CLI entry point for running evaluation."""
-
     config = parse_args()
     metrics = evaluate(config)
     display_results(metrics)
