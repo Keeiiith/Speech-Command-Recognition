@@ -1,0 +1,7 @@
+# Ignore downloaded Speech Commands data and generated manifests
+# Raw dataset download (from data/get_data.py)
+data/raw/
+# Processed CSV manifests and metadata
+/data/processed/
+# Dataset archive downloaded by get_data.py
+/data/speech_commands_v0.02.tar.gz

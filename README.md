@@ -33,6 +33,7 @@ The system follows a specific state-based logic for playback control:
 | **Play + [Song Name]** | Search & Play | Triggers **NLP Metadata Search** to find and play a specific track. |
 | **Pause** | Stop | Halts the current track immediately. |
 | **Next** | Skip | Moves to the next track in the current queue. |
+| **Previous** | Go Back | Moves to the previous track in the current queue. |
 | **Stop** | Terminate | Ends playback session and clears the current state. |
 
 
