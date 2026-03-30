@@ -121,12 +121,12 @@ python src/rl_agent.py --train-split val --eval-split test
 
 ### 5) Run NLP metadata-search demo
 ```bash
-python src/nlp_metadata.py --text "play shape of you"
+python src/nlp_metadata.py --text "play Strangers"
 ```
 
 With custom catalog JSON:
 ```bash
-python src/nlp_metadata.py --text "play blinding lights" --catalog data/song_catalog.json
+python src/nlp_metadata.py --text "play Mercury" --catalog data/song_catalog.json
 ```
 
 Catalog format example:
